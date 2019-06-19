@@ -66,7 +66,10 @@ export default function App() {
       <Canvas
         style={{ background: '#324444' }}
         camera={{ position: [0, 0, 15], rotation: [(15 * Math.PI) / 180, 0, 0] }}
-        onCreated={({ gl }) => ((gl.shadowMap.enabled = true), (gl.shadowMap.type = THREE.PCFSoftShadowMap))}
+        onCreated={({ gl }) => {
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        }}
       >
         <Scene />
       </Canvas>
