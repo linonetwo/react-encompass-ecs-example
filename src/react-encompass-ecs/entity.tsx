@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useContext, Context } from 'react';
+import React, { useEffect, createContext, useContext, Context, useMemo } from 'react';
 import { Component, Entity, EntityChecker, Type } from 'encompass-ecs';
 import { GCOptimizedList } from 'encompass-gc-optimized-collections';
 import { useImmer } from 'use-immer';
@@ -18,11 +18,11 @@ export const GameEntitiesContext = createContext<IEntityMap>({});
  * ```
  * Above example return singleton component inside box, if you warp some component in array, it will return an array of that type of components
  */
-export function useComponent<TComponent extends Component/* , T */>(
-  descriptions: { [name: string]: Array<Type<TComponent>/* | Array<Type<TComponent>> */> },
+export function useComponent<TComponent extends Component, T extends Type<TComponent> | Array<Type<TComponent>>>(
+  descriptions: { [name: string]: T[] },
   context: Context<IEntityMap> = GameEntitiesContext,
-): { [name: string]: Array</* T extends TComponent[] ? GCOptimizedList<Readonly<TComponent>> : */ Readonly<TComponent>> } {
-  const [result, setter] = useImmer<IEntityMap>({});
+) {
+  const [selectedEntities, setter] = useImmer<IEntityMap>({});
   const entities = useContext(context);
   useEffect(() => {
     // select entities that match the components description
@@ -39,15 +39,23 @@ export function useComponent<TComponent extends Component/* , T */>(
     console.log('useEntity() useEffect called');
     // only rerun this selection if entities changes
   }, [setter, descriptions, entities]);
-  console.log('useEntity() entities', entities, 'result', result);
-  return mapValues(result, (entity, name) =>
-    descriptions[name].map(component => {
-      // if (Array.isArray(component)) {
-      //   return entity.get_components(component[0]);
-      // }
-      return entity.get_component(component);
-    }),
+  console.log('useEntity() entities', entities, 'selectedEntities', selectedEntities);
+  const selectedComponents = useMemo(
+    () =>
+      mapValues(selectedEntities, (entity, name) =>
+        descriptions[name].map(component => {
+          if (Array.isArray(component)) {
+            component as Array<Type<TComponent>>;
+            return entity.get_components(component[0]);
+          }
+          return entity.get_component(component as Type<TComponent>);
+        }),
+      ),
+    [descriptions, selectedEntities],
   );
+  console.log('selectedComponents', selectedComponents);
+
+  return selectedComponents;
 }
 
 export function Provider(props: { children: React.ReactNode; entities: IEntityMap; context?: Context<IEntityMap> }) {
