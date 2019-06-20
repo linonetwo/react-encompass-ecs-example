@@ -6,7 +6,7 @@ import MainLoop from 'mainloop.js';
 import { World } from 'encompass-ecs';
 import config from '../package.json';
 
-import { Provider as EntityProvider, IEntityMap, useEntity } from './react-encompass-ecs';
+import { Provider as EntityProvider, IEntityMap, useComponent } from './react-encompass-ecs';
 import { initGameWorld } from './store/gameplay';
 import { PositionComponent } from './store/gameplay/components/position';
 
@@ -16,13 +16,13 @@ const Container = styled.div`
 `;
 
 function Plane() {
-  const { box } = useEntity({ box: [PositionComponent] });
+  const { box } = useComponent({ box: [PositionComponent] });
 
-  const position = box ? box.get_component(PositionComponent) : { x: 20, y: 20 };
+  const position = box ? box[0] : { x: 0, y: 0 };
   console.log('<Plane /> position', position);
   return (
-    <mesh receiveShadow={true}>
-      <planeBufferGeometry attach="geometry" args={[position.x, position.y]} />
+    <mesh receiveShadow={true} position={[position.x, position.y, 0]}>
+      <planeBufferGeometry attach="geometry" args={[20, 20]} />
       <meshPhongMaterial attach="material" color="#272727" />
     </mesh>
   );

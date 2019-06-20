@@ -9,8 +9,9 @@ export class MotionEngine extends Engine {
     const motionMessages = this.read_messages(MotionMessage);
     for (const message of motionMessages.values()) {
       const positionComponent = this.make_mutable(message.component);
-      positionComponent.x += message.x;
-      positionComponent.y += message.y;
+      positionComponent.x += message.x * dt / 1000;
+      positionComponent.y += message.y * dt / 1000;
     }
   }
 }
+

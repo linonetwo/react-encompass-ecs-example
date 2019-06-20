@@ -14,7 +14,7 @@ export class BoxSpawner extends Spawner {
     position.x = 0;
     position.y = 0;
     const velocity = boxEntity.add_component(VelocityComponent);
-    velocity.x = 10;
-    velocity.y = 10;
+    velocity.x = 1;
+    velocity.y = 1;
   }
 }
