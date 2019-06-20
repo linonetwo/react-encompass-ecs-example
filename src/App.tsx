@@ -17,10 +17,9 @@ const Container = styled.div`
 
 function Plane() {
   const { box } = useEntity({ box: [PositionComponent] });
-  console.log('<Plane /> update');
-  
-  
+
   const position = box ? box.get_component(PositionComponent) : { x: 20, y: 20 };
+  console.log('<Plane /> position', position);
   return (
     <mesh receiveShadow={true}>
       <planeBufferGeometry attach="geometry" args={[position.x, position.y]} />
@@ -71,22 +70,21 @@ export function useGame(): [GameState, MainLoop] {
 export default function App() {
   const [currentGameEntities] = useGame();
   console.log('currentGameEntities', currentGameEntities);
-  
 
   return (
-    <EntityProvider entities={currentGameEntities}>
-      <Container>
-        <Canvas
-          style={{ background: '#324444' }}
-          camera={{ position: [0, 0, 15], rotation: [(15 * Math.PI) / 180, 0, 0] }}
-          onCreated={({ gl }) => {
-            gl.shadowMap.enabled = true;
-            gl.shadowMap.type = THREE.PCFSoftShadowMap;
-          }}
-        >
+    <Container>
+      <Canvas
+        style={{ background: '#324444' }}
+        camera={{ position: [0, 0, 15], rotation: [(15 * Math.PI) / 180, 0, 0] }}
+        onCreated={({ gl }) => {
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        }}
+      >
+        <EntityProvider entities={currentGameEntities}>
           <Scene />
-        </Canvas>
-      </Container>
-    </EntityProvider>
+        </EntityProvider>
+      </Canvas>
+    </Container>
   );
 }
