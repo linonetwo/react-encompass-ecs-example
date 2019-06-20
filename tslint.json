@@ -17,6 +17,7 @@
     "ordered-imports": false,
     "jsx-no-lambda": false,
     "jsx-no-multiline-js": false,
+    "max-classes-per-file": false,
     "no-nested-template-literals": false
   }
 }
