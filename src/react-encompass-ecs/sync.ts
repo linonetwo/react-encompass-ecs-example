@@ -9,13 +9,17 @@ export class EntitySyncer {
 
   constructor() {
     this.entities = {};
+    const updateEntitiesStore = produce((draft, id, newEntity) => {
+      draft[id] = newEntity;
+    });
     const store = this;
     @Renders(ReactSyncComponent)
     class ReactSyncRenderer extends EntityRenderer {
       // this got called every render tick
-      public render(current: Entity) {
+      public render(currentEntity: Entity) {
         // put current entity into the resulting entity map, update the old one
-        store.entities[current.get_component(ReactSyncComponent).entity_id] = current;
+        const id = currentEntity.get_component(ReactSyncComponent).entity_id;
+        store.entities = updateEntitiesStore(store.entities, id, currentEntity);
         // console.log('ReactSyncRenderer entities', store.entities);
       }
     }
