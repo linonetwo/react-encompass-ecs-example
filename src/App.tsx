@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { Canvas } from 'react-three-fiber';
+import { StatsGraph } from '@helpscout/stats';
 import styled from 'styled-components';
 import MainLoop from 'mainloop.js';
-import config from '../package.json';
+import { Provider as EntityProvider, IEntityMap, useComponent } from 'react-encompass-ecs';
 
-import { Provider as EntityProvider, IEntityMap, useComponent } from './react-encompass-ecs';
+import config from '../package.json';
 import { initGameWorld } from './store/gameplay';
 import { PositionComponent } from './store/gameplay/components/position';
 
@@ -76,6 +77,7 @@ export default function App() {
   return (
     <Container>
       <Canvas
+        invalidateFrameloop
         style={{ background: '#324444' }}
         camera={{ position: [0, 0, 15], rotation: [(15 * Math.PI) / 180, 0, 0] }}
         onCreated={({ gl }) => {
@@ -87,6 +89,7 @@ export default function App() {
           <Scene />
         </EntityProvider>
       </Canvas>
+      <StatsGraph />
     </Container>
   );
 }

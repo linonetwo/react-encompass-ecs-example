@@ -6,7 +6,7 @@ import { MapInstantizationMessage } from './messages/tileMap';
 import { MotionEngine } from './engines/motion';
 import { VelocityEngine } from './engines/velocity';
 
-import { EntitySyncer } from '../../react-encompass-ecs';
+import { EntitySyncer } from 'react-encompass-ecs';
 
 export function initGameWorld() {
   const worldBuilder = new WorldBuilder();
