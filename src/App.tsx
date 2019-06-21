@@ -16,10 +16,7 @@ const Container = styled.div`
 `;
 
 function Plane() {
-  const { box } = useComponent({ box: [PositionComponent] });
-
-  const position = box ? box[0] : { x: 0, y: 0 };
-  console.log('<Plane /> position', position);
+  const { box: [position] = [{ x: 0, y: 0 }] } = useComponent({ box: [PositionComponent] });
   return (
     <mesh receiveShadow={true} position={[position.x, position.y, 0]}>
       <planeBufferGeometry attach="geometry" args={[20, 20]} />
@@ -46,8 +43,9 @@ export function useGame(): [GameState, MainLoop] {
     currentGameEntities,
     useMemo(() => {
       const { world, entityStore } = initGameWorld();
-      const TIMESTEP = 1000 / config.gameConfig.FPS;
+      const TIMESTEP = 1000 / config.gameConfig.UPS;
       const gameLoop = MainLoop.setSimulationTimestep(TIMESTEP)
+        .setMaxAllowedFPS(config.gameConfig.FPS)
         .setUpdate(deltaT => {
           world.update(deltaT);
         })
@@ -69,8 +67,6 @@ export function useGame(): [GameState, MainLoop] {
 
 export default function App() {
   const [currentGameEntities] = useGame();
-  console.log('currentGameEntities', currentGameEntities);
-
   return (
     <Container>
       <Canvas

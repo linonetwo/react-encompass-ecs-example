@@ -4,6 +4,7 @@
   "author": "Lin Onetwo",
   "license": "UNLICENSED",
   "gameConfig": {
+    "UPS": 60,
     "FPS": 60
   },
   "scripts": {

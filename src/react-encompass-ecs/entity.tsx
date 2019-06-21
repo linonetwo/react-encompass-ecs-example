@@ -44,11 +44,9 @@ export function useComponent<TComponent extends Component, T extends Type<TCompo
         }
       }
     });
-    console.log('useEntity() useEffect called');
     // only rerun this selection if entities changes
   }, [setter, descriptions, entities]);
   const selectedComponents = useMemo(() => {
-    console.log('useEntity() useMemo() entities', entities, 'selectedEntities', selectedEntities);
     return mapValues(selectedEntities, (entity, name) =>
       descriptions[name].map(component => {
         // if (Array.isArray(component)) {
@@ -66,7 +64,5 @@ export function useComponent<TComponent extends Component, T extends Type<TCompo
 
 export function Provider(props: { children: React.ReactNode; entities: IEntityMap; context?: Context<IEntityMap> }) {
   const ProvidedContext = props.context || GameEntitiesContext;
-  console.log('Provider entities', props.entities);
-
   return <ProvidedContext.Provider value={props.entities}>{props.children}</ProvidedContext.Provider>;
 }
