@@ -16,12 +16,16 @@ export const GameEntitiesContext = createContext<IEntityMap>({});
  *   const { box } = useComponents({ box: [PositionComponent] });
  *   const position = box ? box[0] : { x: 20, y: 20 };
  * ```
- * Above example return singleton component inside box, if you warp some component in array, it will return an array of that type of components
+ * Above example return singleton component inside box, if you warp some component in array, it will return an array of that type of components (not supported now due to my TypeScript knowledge limitation)
  */
-export function useComponent<TComponent extends Component, T extends Type<TComponent> | Array<Type<TComponent>>>(
-  descriptions: { [name: string]: T[] },
+export function useComponent<TComponent extends Component, T extends Type<TComponent> /* | Array<Type<TComponent>> */>(
+  descriptions: { [name: string]: /* T[] */ Array<Type<TComponent>> },
   context: Context<IEntityMap> = GameEntitiesContext,
-) {
+): {
+  [name: string]: Array<
+    /* T extends Array<Type<TComponent>> ? GCOptimizedList<Readonly<TComponent>> : */ Readonly<TComponent>
+  >;
+} {
   const [selectedEntities, setter] = useImmer<IEntityMap>({});
   const entities = useContext(context);
   useEffect(() => {
@@ -44,11 +48,11 @@ export function useComponent<TComponent extends Component, T extends Type<TCompo
     () =>
       mapValues(selectedEntities, (entity, name) =>
         descriptions[name].map(component => {
-          if (Array.isArray(component)) {
-            component as Array<Type<TComponent>>;
-            return entity.get_components(component[0]);
-          }
-          return entity.get_component(component as Type<TComponent>);
+          // if (Array.isArray(component)) {
+          //   component as Array<Type<TComponent>>;
+          //   return entity.get_components(component[0]);
+          // }
+          return entity.get_component(component);
         }),
       ),
     [descriptions, selectedEntities],
