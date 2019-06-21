@@ -18,8 +18,7 @@ export function initGameWorld() {
   const mapInstantizationMessage = worldBuilder.emit_message(MapInstantizationMessage);
   mapInstantizationMessage.mapDefinition = ``;
 
-  const entityStore = new EntitySyncer();
-  worldBuilder.add_renderer(entityStore.syncRenderer);
+  const entityStore = new EntitySyncer(worldBuilder);
   const world = worldBuilder.build();
   return { world, entityStore };
 }
