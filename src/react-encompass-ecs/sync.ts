@@ -1,15 +1,14 @@
 import { Subject } from 'rxjs';
-import { Renders, EntityRenderer, GeneralRenderer, Entity, Type, WorldBuilder } from 'encompass-ecs';
+import { Renders, EntityRenderer, GeneralRenderer, Entity, WorldBuilder } from 'encompass-ecs';
 import { produce } from 'immer';
 import { ReactSyncComponent } from './component';
 import { IEntityMap } from './entity';
 
-import { PositionComponent } from '../store/gameplay/components/position';
-
 export const updaterContext: Subject<boolean> = new Subject();
 export class EntitySyncer {
   public entities: IEntityMap;
-  /** trigger component update by flipping boolean value */ 
+  /** trigger component update by flipping boolean value */
+
   private currentUpdaterValue: boolean = true;
 
   constructor(worldBuilder: WorldBuilder) {
@@ -30,13 +29,12 @@ export class EntitySyncer {
     }
     worldBuilder.add_renderer(ReactSyncRenderer);
 
-
-    updaterContext.subscribe(currentValue => (store.currentUpdaterValue = currentValue))
+    updaterContext.subscribe(currentValue => (store.currentUpdaterValue = currentValue));
     class ReactReRenderTriggerRenderer extends GeneralRenderer {
       public layer = 1;
       // this got called once every render tick
       public render() {
-        updaterContext.next(!store.currentUpdaterValue)
+        updaterContext.next(!store.currentUpdaterValue);
       }
     }
     worldBuilder.add_renderer(ReactReRenderTriggerRenderer);

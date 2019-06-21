@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import { Canvas } from 'react-three-fiber';
 import styled from 'styled-components';
 import MainLoop from 'mainloop.js';
-import { World } from 'encompass-ecs';
 import config from '../package.json';
 
 import { Provider as EntityProvider, IEntityMap, useComponent } from './react-encompass-ecs';
@@ -16,12 +15,19 @@ const Container = styled.div`
 `;
 
 function Plane() {
-  const { box: [position] = [{ x: 0, y: 0 }] } = useComponent({ box: [PositionComponent] });
+  const { boxes } = useComponent({ boxes: [PositionComponent] });
   return (
-    <mesh receiveShadow={true} position={[position.x, position.y, 0]}>
-      <planeBufferGeometry attach="geometry" args={[20, 20]} />
-      <meshPhongMaterial attach="material" color="#272727" />
-    </mesh>
+    <>
+      {boxes.map((box, index) => {
+        const [position] = box;
+        return (
+          <mesh receiveShadow={true} position={[position.x, position.y, 0]} key={index}>
+            <planeBufferGeometry attach="geometry" args={[20, 20]} />
+            <meshPhongMaterial attach="material" color="#272727" />
+          </mesh>
+        );
+      })}
+    </>
   );
 }
 

@@ -8,13 +8,15 @@ import { ReactSyncComponent } from '../../../react-encompass-ecs/component';
 @Reads(MapInstantizationMessage)
 export class BoxSpawner extends Spawner {
   public spawn(message: MapInstantizationMessage) {
-    const boxEntity = this.create_entity();
-    boxEntity.add_component(ReactSyncComponent);
-    const position = boxEntity.add_component(PositionComponent);
-    position.x = 0;
-    position.y = 0;
-    const velocity = boxEntity.add_component(VelocityComponent);
-    velocity.x = 1;
-    velocity.y = 1;
+    for (let count = 0; count < 100; count += 1) {
+      const boxEntity = this.create_entity();
+      boxEntity.add_component(ReactSyncComponent);
+      const position = boxEntity.add_component(PositionComponent);
+      position.x = 0;
+      position.y = 0;
+      const velocity = boxEntity.add_component(VelocityComponent);
+      velocity.x = 3 * Math.random();
+      velocity.y = 3 * Math.random();
+    }
   }
 }
