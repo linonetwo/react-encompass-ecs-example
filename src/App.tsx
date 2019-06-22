@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, createRef } from 'react';
 import * as THREE from 'three';
-import { Canvas } from 'react-three-fiber';
+import { Canvas, useRender, applyProps } from 'react-three-fiber';
 import { StatsGraph } from '@helpscout/stats';
 import styled from 'styled-components';
 import MainLoop from 'mainloop.js';
@@ -15,19 +15,45 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-function Plane() {
+function useTransientData<T>(dataSource: T, mapDataSource: (source: T) => object) {
+  const bind = useRef<any>();
+  useRender(() => applyProps(bind.current, mapDataSource(dataSource)));
+  return bind;
+}
+
+function useTransientDataList<T>(dataSources: T[], mapDataSource: (source: T) => object, amount: number = dataSources.length) {
+  const refsRef = useRef<Array<React.MutableRefObject<any>>>([]);
+  // update refs array only when "amount" changed
+  refsRef.current = useMemo(() => {
+    const elementRefs: Array<React.MutableRefObject<any>> = [];
+    for (let count = 0; count < amount; count += 1) {
+      elementRefs.push(createRef<any>());
+    }
+    return elementRefs;
+  }, [amount]);
+  useRender(() => {
+    refsRef.current.forEach((ref, index) => {
+      // after this ref attached to the element, and data is prepared
+      if (ref.current && dataSources[index]) {
+        const props = mapDataSource(dataSources[index]);
+        applyProps(ref.current, props);
+      }
+    });
+  }, false, [dataSources]);
+  return refsRef.current;
+}
+
+function Planes() {
   const { boxes } = useComponent({ boxes: [PositionComponent] });
+  const refs = useTransientDataList(boxes, ([{ x, y }]) => ({ position: [x, y, 0] }));
   return (
     <>
-      {boxes.map((box, index) => {
-        const [position] = box;
-        return (
-          <mesh receiveShadow={true} position={[position.x, position.y, 0]} key={index}>
-            <planeBufferGeometry attach="geometry" args={[20, 20]} />
-            <meshPhongMaterial attach="material" color="#272727" />
-          </mesh>
-        );
-      })}
+      {refs.map((_, index) => (
+        <mesh ref={refs[index]} receiveShadow={true} key={index}>
+          <planeBufferGeometry attach="geometry" args={[20, 20]} />
+          <meshPhongMaterial attach="material" color="#272727" />
+        </mesh>
+      ))}
     </>
   );
 }
@@ -38,7 +64,7 @@ function Scene() {
     <>
       <ambientLight intensity={0.5} />
       <spotLight intensity={0.6} position={[30, 30, 50]} angle={0.2} penumbra={1} castShadow={true} />
-      <Plane />
+      <Planes />
     </>
   );
 }
@@ -77,7 +103,6 @@ export default function App() {
   return (
     <Container>
       <Canvas
-        invalidateFrameloop
         style={{ background: '#324444' }}
         camera={{ position: [0, 0, 15], rotation: [(15 * Math.PI) / 180, 0, 0] }}
         onCreated={({ gl }) => {
