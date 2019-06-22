@@ -36,7 +36,7 @@
     "param.macro": "^3.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-encompass-ecs": "^1.2.0",
+    "react-encompass-ecs": "^1.2.1",
     "react-three-fiber": "^2.2.5",
     "styled-components": "^4.3.1",
     "styled-is": "^1.3.0",
