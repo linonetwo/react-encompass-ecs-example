@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, createRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, createRef } from 'react';
 import * as THREE from 'three';
 import { Canvas, useRender, applyProps } from 'react-three-fiber';
 import { StatsGraph } from '@helpscout/stats';
@@ -6,6 +6,10 @@ import styled from 'styled-components';
 import MainLoop from 'mainloop.js';
 import { Provider as EntityProvider, IEntityMap, useComponent } from 'react-encompass-ecs';
 import { useTransientDataList } from 'use-three-transient-updates';
+import * as Comlink from 'comlink';
+
+import { MyClass } from './aaa';
+import GameLoopWorker from './gameloop.worker';
 
 import config from '../package.json';
 import { initGameWorld } from './store/gameplay';
@@ -19,7 +23,7 @@ const Container = styled.div`
 function Planes() {
   const { boxes } = useComponent({ boxes: [PositionComponent] });
   const refs = useTransientDataList(boxes, ([{ x, y }]) => ({ position: [x, y, x / 4] }));
-  
+
   return (
     <>
       {refs.map((_, index) => (
@@ -72,8 +76,16 @@ export function useGame(): [GameState, MainLoop] {
   ];
 }
 
+const MyClassType = Comlink.wrap<typeof MyClass>(new GameLoopWorker());
+(async function() {
+  const aaa = await new MyClassType();
+  await aaa.increment();
+  console.log(await aaa.counter);
+})();
+
 export default function App() {
   const [currentGameEntities] = useGame();
+
   return (
     <Container>
       <Canvas

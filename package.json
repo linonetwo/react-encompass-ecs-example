@@ -13,6 +13,14 @@
     "now-build": "rescripts build",
     "test": "rescripts test"
   },
+  "rescripts": [
+    [
+      "use-babel-config",
+      ".babelrc.js"
+    ],
+    "disable-eslint",
+    "worker-loader"
+  ],
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -22,14 +30,9 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "rescripts": [
-    [
-      "use-babel-config",
-      ".babelrc.js"
-    ]
-  ],
   "dependencies": {
     "@helpscout/stats": "0.0.5",
+    "comlink": "^4.0.1",
     "encompass-ecs": "^0.27.4",
     "encompass-gc-optimized-collections": "^1.0.3",
     "immer": "^3.1.3",
@@ -62,6 +65,8 @@
     "babel-plugin-array-last-index": "0.0.4",
     "babel-plugin-styled-components": "^1.10.1",
     "react-scripts": "^3.0.1",
+    "rescript-disable-eslint": "^1.0.1",
+    "rescript-worker-loader": "^1.0.1",
     "tslint": "^5.17.0",
     "tslint-clean-code": "^0.2.9",
     "tslint-config-prettier": "^1.18.0",
@@ -70,6 +75,7 @@
     "tslint-react-hooks": "^2.1.1",
     "tslint-sonarts": "^1.9.0",
     "typescript": "^3.5.2",
-    "typescript-styled-plugin": "^0.14.0"
+    "typescript-styled-plugin": "^0.14.0",
+    "worker-loader": "^2.0.0"
   }
 }
