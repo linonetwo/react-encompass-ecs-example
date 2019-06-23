@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef, createRef } from 'react';
+import React, { useState, useMemo, useRef, createRef } from 'react';
 import * as THREE from 'three';
 import { Canvas, useRender, applyProps } from 'react-three-fiber';
 import { StatsGraph } from '@helpscout/stats';
 import styled from 'styled-components';
 import MainLoop from 'mainloop.js';
 import { Provider as EntityProvider, IEntityMap, useComponent } from 'react-encompass-ecs';
+import { useTransientDataList } from 'use-three-transient-updates';
 
 import config from '../package.json';
 import { initGameWorld } from './store/gameplay';
@@ -15,37 +16,10 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-function useTransientData<T>(dataSource: T, mapDataSource: (source: T) => object) {
-  const bind = useRef<any>();
-  useRender(() => applyProps(bind.current, mapDataSource(dataSource)));
-  return bind;
-}
-
-function useTransientDataList<T>(dataSources: T[], mapDataSource: (source: T) => object, amount: number = dataSources.length) {
-  const refsRef = useRef<Array<React.MutableRefObject<any>>>([]);
-  // update refs array only when "amount" changed
-  refsRef.current = useMemo(() => {
-    const elementRefs: Array<React.MutableRefObject<any>> = [];
-    for (let count = 0; count < amount; count += 1) {
-      elementRefs.push(createRef<any>());
-    }
-    return elementRefs;
-  }, [amount]);
-  useRender(() => {
-    refsRef.current.forEach((ref, index) => {
-      // after this ref attached to the element, and data is prepared
-      if (ref.current && dataSources[index]) {
-        const props = mapDataSource(dataSources[index]);
-        applyProps(ref.current, props);
-      }
-    });
-  }, false, [dataSources]);
-  return refsRef.current;
-}
-
 function Planes() {
   const { boxes } = useComponent({ boxes: [PositionComponent] });
   const refs = useTransientDataList(boxes, ([{ x, y }]) => ({ position: [x, y, 0] }));
+  
   return (
     <>
       {refs.map((_, index) => (
