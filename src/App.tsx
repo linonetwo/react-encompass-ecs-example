@@ -18,13 +18,13 @@ const Container = styled.div`
 
 function Planes() {
   const { boxes } = useComponent({ boxes: [PositionComponent] });
-  const refs = useTransientDataList(boxes, ([{ x, y }]) => ({ position: [x, y, 0] }));
+  const refs = useTransientDataList(boxes, ([{ x, y }]) => ({ position: [x, y, x / 4] }));
   
   return (
     <>
       {refs.map((_, index) => (
         <mesh ref={refs[index]} receiveShadow={true} key={index}>
-          <planeBufferGeometry attach="geometry" args={[20, 20]} />
+          <planeBufferGeometry attach="geometry" args={[2, 2]} />
           <meshPhongMaterial attach="material" color="#272727" />
         </mesh>
       ))}
